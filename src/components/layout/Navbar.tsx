@@ -26,22 +26,15 @@ export function Navbar() {
   const location = useLocation();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [showMegaMenu, setShowMegaMenu] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showMobileSolutions, setShowMobileSolutions] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const [showMobileMore, setShowMobileMore] = useState(false);
 
   useEffect(() => {
     setIsOpen(false);
-    setShowMegaMenu(false);
-    setShowMoreMenu(false);
     setShowMobileSolutions(false);
+    setShowMobileMore(false);
   }, [location]);
 
   const groupedSolutions = solutionCategories.map((category) => ({
@@ -50,204 +43,134 @@ export function Navbar() {
   }));
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/95 border-b border-border/50 transition-all duration-300",
-        isScrolled ? "py-2 shadow-sm" : "py-3"
-      )}
-    >
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background border-b">
       <nav className="container mx-auto px-4">
-        {/* Top Bar */}
-        <div className="flex items-center justify-between">
-          {/* ✅ LOGO (FULL NAME EVERYWHERE) */}
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-lg font-bold text-primary"
-          >
+        {/* Top */}
+        <div className="flex items-center justify-between py-3">
+          <Link to="/" className="flex items-center gap-2 font-bold text-primary">
             <Leaf className="h-6 w-6" />
-            <span className="text-base sm:text-lg">
-              Chemical Azadi
-            </span>
+            Chemical Azadi
           </Link>
 
-          {/* Desktop Menu */}
-          <div className="hidden lg:flex items-center gap-1">
-            {mainLinks.map((link) => (
-              <Link
-                key={link.url}
-                to={link.url}
-                className={cn(
-                  "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                  location.pathname === link.url
-                    ? "text-primary bg-primary/10"
-                    : "text-foreground/80 hover:text-primary hover:bg-primary/5"
-                )}
-              >
-                {link.title}
+          <button
+            className="lg:hidden"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X /> : <Menu />}
+          </button>
+
+          {/* Desktop */}
+          <div className="hidden lg:flex gap-2">
+            {mainLinks.map((l) => (
+              <Link key={l.url} to={l.url} className="px-3 py-2">
+                {l.title}
               </Link>
             ))}
 
-            {/* Solutions Mega Menu */}
+            {/* Solutions desktop */}
             <div
-              className="relative"
               onMouseEnter={() => setShowMegaMenu(true)}
               onMouseLeave={() => setShowMegaMenu(false)}
+              className="relative"
             >
-              <button className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5">
-                Solutions
-                <ChevronDown
-                  className={cn(
-                    "h-4 w-4 transition-transform",
-                    showMegaMenu && "rotate-180"
-                  )}
-                />
+              <button className="flex items-center gap-1 px-3 py-2">
+                Solutions <ChevronDown />
               </button>
 
               {showMegaMenu && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[720px]">
-                  <div className="bg-background border border-border rounded-xl shadow-lg p-5 grid grid-cols-5 gap-4 animate-fade-up">
-                    {groupedSolutions.map((group) => (
-                      <div key={group.category}>
-                        <h4 className="text-xs font-semibold text-primary uppercase mb-2">
-                          {group.category}
-                        </h4>
-                        {group.links.map((link) => (
-                          <Link
-                            key={link.url}
-                            to={link.url}
-                            className="block text-xs text-muted-foreground hover:text-primary py-0.5"
-                          >
-                            {link.title}
-                          </Link>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* More Menu */}
-            <div
-              className="relative"
-              onMouseEnter={() => setShowMoreMenu(true)}
-              onMouseLeave={() => setShowMoreMenu(false)}
-            >
-              <button className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5">
-                More
-                <ChevronDown
-                  className={cn(
-                    "h-4 w-4 transition-transform",
-                    showMoreMenu && "rotate-180"
-                  )}
-                />
-              </button>
-
-              {showMoreMenu && (
-                <div className="absolute top-full right-0 pt-2 w-48">
-                  <div className="bg-background border border-border rounded-xl shadow-lg py-2 animate-fade-up">
-                    {moreLinks.map((link) => (
-                      <Link
-                        key={link.url}
-                        to={link.url}
-                        className={cn(
-                          "block px-4 py-2 text-sm transition-colors",
-                          location.pathname === link.url
-                            ? "text-primary bg-primary/10"
-                            : "text-foreground/80 hover:text-primary hover:bg-primary/5"
-                        )}
-                      >
-                        {link.title}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <Link to="/shop">
-              <Button variant="cta" size="sm" className="ml-2">
-                Shop Now
-              </Button>
-            </Link>
-          </div>
-
-          {/* Mobile Toggle */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2"
-            aria-label="Toggle menu"
-          >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="lg:hidden mt-4 pb-4 animate-fade-up">
-            <div className="flex flex-col gap-1">
-              {mainLinks.map((link) => (
-                <Link
-                  key={link.url}
-                  to={link.url}
-                  className="px-4 py-3 rounded-lg font-medium text-foreground/80 hover:bg-primary/5"
-                >
-                  {link.title}
-                </Link>
-              ))}
-
-              {/* Mobile Solutions */}
-              <button
-                onClick={() => setShowMobileSolutions(!showMobileSolutions)}
-                className="flex items-center justify-between px-4 py-3 rounded-lg font-medium text-foreground/80 hover:bg-primary/5"
-              >
-                Solutions
-                <ChevronDown
-                  className={cn(
-                    "h-4 w-4 transition-transform",
-                    showMobileSolutions && "rotate-180"
-                  )}
-                />
-              </button>
-
-              {showMobileSolutions && (
-                <div className="ml-4 border-l border-border pl-3">
-                  {groupedSolutions.map((group) => (
-                    <div key={group.category} className="mb-2">
-                      <p className="text-xs uppercase font-semibold text-primary mt-2">
-                        {group.category}
-                      </p>
-                      {group.links.map((link) => (
-                        <Link
-                          key={link.url}
-                          to={link.url}
-                          className="block py-2 text-sm text-muted-foreground hover:text-primary"
-                        >
-                          {link.title}
+                <div className="absolute top-full bg-white shadow-lg p-4 grid grid-cols-5 gap-4">
+                  {groupedSolutions.map((g) => (
+                    <div key={g.category}>
+                      <p className="font-semibold text-sm">{g.category}</p>
+                      {g.links.map((l) => (
+                        <Link key={l.url} to={l.url} className="block text-sm">
+                          {l.title}
                         </Link>
                       ))}
                     </div>
                   ))}
                 </div>
               )}
-
-              {moreLinks.map((link) => (
-                <Link
-                  key={link.url}
-                  to={link.url}
-                  className="px-4 py-3 rounded-lg font-medium text-foreground/80 hover:bg-primary/5"
-                >
-                  {link.title}
-                </Link>
-              ))}
-
-              <Link
-                to="/shop"
-                className="px-4 py-3 rounded-lg font-medium text-primary bg-primary/10"
-              >
-                Shop Now
-              </Link>
             </div>
+
+            {/* More desktop */}
+            <div
+              onMouseEnter={() => setShowMoreMenu(true)}
+              onMouseLeave={() => setShowMoreMenu(false)}
+              className="relative"
+            >
+              <button className="flex items-center gap-1 px-3 py-2">
+                More <ChevronDown />
+              </button>
+
+              {showMoreMenu && (
+                <div className="absolute top-full bg-white shadow-md">
+                  {moreLinks.map((l) => (
+                    <Link key={l.url} to={l.url} className="block px-4 py-2">
+                      {l.title}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Button size="sm">Shop</Button>
+          </div>
+        </div>
+
+        {/* ✅ MOBILE MENU – DESKTOP STYLE */}
+        {isOpen && (
+          <div className="lg:hidden pb-4 space-y-2">
+            {mainLinks.map((l) => (
+              <Link key={l.url} to={l.url} className="block px-4 py-3">
+                {l.title}
+              </Link>
+            ))}
+
+            {/* Solutions mobile (same as desktop) */}
+            <button
+              onClick={() => setShowMobileSolutions(!showMobileSolutions)}
+              className="flex justify-between w-full px-4 py-3"
+            >
+              Solutions <ChevronDown className={showMobileSolutions ? "rotate-180" : ""} />
+            </button>
+
+            {showMobileSolutions && (
+              <div className="pl-6 space-y-3">
+                {groupedSolutions.map((g) => (
+                  <div key={g.category}>
+                    <p className="font-semibold text-sm">{g.category}</p>
+                    {g.links.map((l) => (
+                      <Link key={l.url} to={l.url} className="block py-1 text-sm">
+                        {l.title}
+                      </Link>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* More mobile (same as desktop) */}
+            <button
+              onClick={() => setShowMobileMore(!showMobileMore)}
+              className="flex justify-between w-full px-4 py-3"
+            >
+              More <ChevronDown className={showMobileMore ? "rotate-180" : ""} />
+            </button>
+
+            {showMobileMore && (
+              <div className="pl-6">
+                {moreLinks.map((l) => (
+                  <Link key={l.url} to={l.url} className="block py-2 text-sm">
+                    {l.title}
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            <Link to="/shop" className="block px-4 py-3 font-semibold">
+              Shop Now
+            </Link>
           </div>
         )}
       </nav>
