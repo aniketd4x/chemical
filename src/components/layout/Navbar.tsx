@@ -45,11 +45,11 @@ export function Navbar() {
   }));
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border overflow-x-hidden">
       <nav className="container mx-auto px-4">
-        {/* Top bar */}
+        {/* TOP BAR */}
         <div className="flex items-center justify-between py-3">
-          {/* Logo */}
+          {/* LOGO */}
           <Link
             to="/"
             className="flex items-center gap-2 text-lg font-bold text-primary"
@@ -58,17 +58,17 @@ export function Navbar() {
             Chemical Azadi
           </Link>
 
-          {/* Mobile toggle */}
+          {/* MOBILE TOGGLE */}
           <button
             className="lg:hidden p-2"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
-            {isOpen ? <X /> : <Menu />}
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
 
           {/* ================= DESKTOP MENU ================= */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-1 overflow-visible">
             {mainLinks.map((link) => (
               <Link
                 key={link.url}
@@ -84,7 +84,7 @@ export function Navbar() {
               </Link>
             ))}
 
-            {/* ✅ SOLUTIONS MEGA MENU */}
+            {/* SOLUTIONS MEGA MENU */}
             <div
               className="relative"
               onMouseEnter={() => setShowMegaMenu(true)}
@@ -127,7 +127,7 @@ export function Navbar() {
               )}
             </div>
 
-            {/* ✅ MORE DROPDOWN */}
+            {/* MORE MENU */}
             <div
               className="relative"
               onMouseEnter={() => setShowMoreMenu(true)}
@@ -175,7 +175,7 @@ export function Navbar() {
 
         {/* ================= MOBILE MENU ================= */}
         {isOpen && (
-          <div className="lg:hidden pb-4 space-y-2">
+          <div className="lg:hidden pb-4 space-y-2 w-full overflow-x-hidden">
             {mainLinks.map((link) => (
               <Link
                 key={link.url}
